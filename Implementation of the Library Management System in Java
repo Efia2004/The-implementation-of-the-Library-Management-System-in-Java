@@ -1,0 +1,205 @@
+The implementation of the Library Management System in Java:
+
+Book Class
+
+public class Book {
+    private String bookId;
+    private String title;
+    private String author;
+    private int availableCopies;
+
+    public Book(String bookId, String title, String author, int availableCopies) {
+        this.bookId = bookId;
+        this.title = title;
+        this.author = author;
+        this.availableCopies = availableCopies;
+    }
+
+    public String getBookId() {
+        return bookId;
+    }
+
+    public void setBookId(String bookId) {
+        this.bookId = bookId;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+    public int getAvailableCopies() {
+        return availableCopies;
+    }
+
+    public void setAvailableCopies(int availableCopies) {
+        this.availableCopies = availableCopies;
+    }
+
+    public void borrowBook() throws Exception {
+        if (availableCopies > 0) {
+            availableCopies--;
+        } else {
+            throw new Exception("Book is not available");
+        }
+    }
+
+    public void returnBook() {
+        availableCopies++;
+    }
+}
+
+
+Member Class
+
+import java.util.ArrayList;
+
+public class Member {
+    private String memberId;
+    private String name;
+    private ArrayList<Book> borrowedBooks;
+
+    public Member(String memberId, String name) {
+        this.memberId = memberId;
+        this.name = name;
+        this.borrowedBooks = new ArrayList<>();
+    }
+
+    public String getMemberId() {
+        return memberId;
+    }
+
+    public void setMemberId(String memberId) {
+        this.memberId = memberId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public ArrayList<Book> getBorrowedBooks() {
+        return borrowedBooks;
+    }
+
+    public void borrowBook(Book book) throws Exception {
+        if (book.getAvailableCopies() > 0) {
+            book.borrowBook();
+            borrowedBooks.add(book);
+        } else {
+            throw new Exception("Book is not available");
+        }
+    }
+
+    public void returnBook(Book book) {
+        book.returnBook();
+        borrowedBooks.remove(book);
+    }
+}
+
+
+Library Class
+
+import java.util.ArrayList;
+
+public class Library {
+    private ArrayList<Book> books;
+    private ArrayList<Member> members;
+
+    public Library() {
+        this.books = new ArrayList<>();
+        this.members = new ArrayList<>();
+    }
+
+    public ArrayList<Book> getBooks() {
+        return books;
+    }
+
+    public void addBook(Book book) {
+        books.add(book);
+    }
+
+    public ArrayList<Member> getMembers() {
+        return members;
+    }
+
+    public void registerMember(Member member) {
+        members.add(member);
+    }
+
+    public void displayBooks() {
+        for (Book book : books) {
+            System.out.println(book.getTitle() + " by " + book.getAuthor() + " - Available copies: " + book.getAvailableCopies());
+        }
+    }
+
+    public Book searchBookByTitle(String title) {
+        for (Book book : books) {
+            if (book.getTitle().equals(title)) {
+                return book;
+            }
+        }
+        return null;
+    }
+
+    public Book searchBookByAuthor(String author) {
+        for (Book book : books) {
+            if (book.getAuthor().equals(author)) {
+                return book;
+            }
+        }
+        return null;
+    }
+}
+
+
+Main Method
+
+public class Main {
+    public static void main(String[] args) {
+        Library library = new Library();
+
+        Book book1 = new Book("1", "Book1", "Author1", 5);
+        Book book2 = new Book("2", "Book2", "Author2", 3);
+        Book book3 = new Book("3", "Book3", "Author3", 2);
+
+        library.addBook(book1);
+        library.addBook(book2);
+        library.addBook(book3);
+
+        Member member1 = new Member("1", "Member1");
+        Member member2 = new Member("2", "Member2");
+
+        library.registerMember(member1);
+        library.registerMember(member2);
+
+        library.displayBooks();
+
+        try {
+            member1.borrowBook(book1);
+            member2.borrowBook(book2);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+
+        library.displayBooks();
+
+        member1.returnBook(book1);
+
+        library.displayBooks();
+    }
+}
